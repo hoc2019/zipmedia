@@ -1,0 +1,29 @@
+{
+  "name": "@pdabc/zipmedia",
+  "version": "1.0.0",
+  "description": "课件对应音视频压缩",
+  "main": "index.js",
+  "bin": {
+    "zipmedia": "scripts/mediaZip.js"
+  },
+  "scripts": {
+    "start": "node scripts/mediaZip.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "陈颖",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^4.0.1",
+    "colors": "^1.4.0",
+    "fs-extra": "^9.0.1",
+    "get-video-info": "^1.0.0",
+    "signale": "^1.4.0",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IsabellaChen7"
+  }
+}
