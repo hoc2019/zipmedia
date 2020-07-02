@@ -15,6 +15,7 @@ signale.success(
   "音频包名:",
   colors.yellow(process.argv[2])
 );
+console.log("newDirList", newDirList);
 
 if (
   dirList.filter((item) => item.includes(".mp3") || item.includes(".mp4"))
@@ -54,17 +55,17 @@ newDirList.forEach((item) => {
       archive.append(fs.createReadStream(filePath), { name: item });
       break;
     case ".mp4":
-      if (!item.includes("_mute.mp4")) {
-        fs.removeSync(filePath);
-        signale.success(colors.red(item + "已删除！"));
+      if (item.includes("_mute.mp4")) {
+        archive.append(fs.createReadStream(filePath), { name: item });
       } else {
         getVideoInfo(filePath).then((info) => {
           const bitSize = Math.round(info.format.bit_rate / 1000);
           if (bitSize >= 900) {
-            signale.warn(colors.yellow(item + " 文件大小异常!"));
+            signale.warn(
+              colors.yellow(item + " 文件大小异常!（" + bitSize + "kbps）")
+            );
           }
         });
-        archive.append(fs.createReadStream(filePath), { name: item });
       }
       break;
   }
