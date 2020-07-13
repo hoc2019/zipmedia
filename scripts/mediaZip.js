@@ -6,8 +6,7 @@ const getVideoInfo = require("get-video-info");
 const signale = require("signale");
 const colors = require("colors");
 
-// const curMediasPath = process.cwd();
-const curMediasPath = path.resolve(__dirname, "../media");
+const curMediasPath = process.cwd();
 const dirList = fs.readdirSync(curMediasPath); // 获取文件列表
 const newDirList = filter_Ds_Store(dirList); // 过滤出mp3和mp4文件
 signale.success(
