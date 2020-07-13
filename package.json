@@ -1,6 +1,6 @@
 {
   "name": "@pdabc/zipmedia",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "课件对应音视频压缩",
   "main": "index.js",
   "bin": {

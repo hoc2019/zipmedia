@@ -6,7 +6,8 @@ const getVideoInfo = require("get-video-info");
 const signale = require("signale");
 const colors = require("colors");
 
-const curMediasPath = process.cwd();
+// const curMediasPath = process.cwd();
+const curMediasPath = path.resolve(__dirname, "../media");
 const dirList = fs.readdirSync(curMediasPath); // 获取文件列表
 const newDirList = filter_Ds_Store(dirList); // 过滤出mp3和mp4文件
 signale.success(
@@ -15,8 +16,6 @@ signale.success(
   "音频包名:",
   colors.yellow(process.argv[2])
 );
-console.log("newDirList", newDirList);
-
 if (
   dirList.filter((item) => item.includes(".mp3") || item.includes(".mp4"))
     .length === 0
@@ -24,7 +23,7 @@ if (
   return;
 
 dirList.forEach((item) => {
-  const filePath = path.resolve(curMediasPath, item);
+  let filePath = path.resolve(curMediasPath, item);
   //   当前目录中如果有文件夹 提示
   fs.stat(filePath, (err, stat) => {
     if (stat.isDirectory()) {
@@ -32,7 +31,7 @@ dirList.forEach((item) => {
     }
   });
   // 删除图片
-  if (item.includes(".jpg") || item.includes(".png")) {
+  if (item.includes(".jpg") || item.includes(".png")||item.includes(".ini")) {
     fs.removeSync(filePath);
     signale.success(colors.red(item + "已删除！"));
     return;
@@ -47,9 +46,21 @@ function filter_Ds_Store(arr) {
   return arr.filter((item) => item.includes(".mp3") || item.includes(".mp4"));
 }
 
-newDirList.forEach((item) => {
-  const filePath = path.resolve(curMediasPath, item);
+newDirList.forEach((item, index) => {
+  let filePath = path.resolve(curMediasPath, item);
   const ext = path.extname(item);
+  let oldPath = filePath;
+  const fileSize = (fs.statSync(filePath).size / 1000000).toFixed(1);
+  //   处理文件名
+  if (item.includes(" ") || item.includes("_")) {
+    newDirList.splice(index, 1, item.replace(/[\s]/, "").replace(/__*/, "_"));
+    filePath = path.resolve(
+      curMediasPath,
+      item.replace(/[\s]/, "").replace(/__*/, "_")
+    );
+    fs.renameSync(oldPath, filePath);
+  }
+  // 压缩文件
   switch (ext) {
     case ".mp3":
       archive.append(fs.createReadStream(filePath), { name: item });
@@ -62,7 +73,17 @@ newDirList.forEach((item) => {
           const bitSize = Math.round(info.format.bit_rate / 1000);
           if (bitSize >= 900) {
             signale.warn(
-              colors.yellow(item + " 文件大小异常!（" + bitSize + "kbps）")
+              item +
+                " 文件大小为：" +
+                (fileSize > 10
+                  ? colors.red(fileSize + "M")
+                  : colors.green(fileSize + "M")) +
+                "," +
+                "总比特率:（" +
+                (fileSize > 10
+                  ? colors.red(bitSize + "kbps")
+                  : colors.yellow(bitSize + "kbps")) +
+                "）"
             );
           }
         });
